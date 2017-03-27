@@ -55,8 +55,8 @@ char		*get_signed_prefix(intmax_t nbr, t_fmt_spec *fmt);
 char		*get_unsigned_prefix(uintmax_t nbr, t_fmt_spec *fmt);
 
 
-int					handler(int fd, va_list ap, t_fmt_spec *fmt);
-int					parse_fmt_spec(char const * format, va_list ap, \
+int			handler(int fd, va_list ap, t_fmt_spec *fmt);
+int			parse_fmt_spec(char const * format, va_list ap, \
 t_fmt_spec * const fmt);
 
 
