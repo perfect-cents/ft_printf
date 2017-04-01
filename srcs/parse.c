@@ -38,6 +38,11 @@ int		parse_min_field_width(char const * format, va_list ap, t_fmt_spec * const f
 	if (*format == '*')
 	{
 		fmt->mfw = va_arg(ap, int);
+		if (fmt->mfw < 0)
+		{
+			fmt->mfw = ft_abs(fmt->mfw);
+			fmt->f.j = 1;
+		}
 		return (1);
 	}
 	fmt->mfw = 0;

@@ -1,87 +1,86 @@
 #include <ft_printf.h>
 #include <libft.h>
 
-int			write_nbr(int fd, uintmax_t nbr, char * /*const*/ pfx, t_fmt_spec *fmt)
+void	get_base_l_init(t_nbr_l *len, t_fmt_spec *fmt, uintmax_t nbr)
 {
-	int			l;
-	int			p;
-	int			sc;
-	int			b;
-	uintmax_t	t;
-	int			n;
-	char		*bs;
-	char		*s;
-
 	if ('o' == fmt->cnv)
-		b = 8;
+		len->b = 8;
 	else if (ft_strchr("xXp", fmt->cnv))
-		b = 16;
+		len->b = 16;
 	else if (fmt->cnv == 'b')
-		b = 2;
+		len->b = 2;
 	else
-		b = 10;
+		len->b = 10;
 
-	t = nbr;
-	l = !!t;
-	while (t /= b)
-		l++;
+	len->l = !!nbr;
+	while (nbr /= len->b)
+		len->l++;
+}
 
-	p = ft_strlen(pfx);
+void		refine_len(t_nbr_l *len, char **pfx, t_fmt_spec *fmt)
+{
+	len->p = ft_strlen(*pfx);
 
 	if (fmt->prc < 0)
 	{
-		if (l < 1)
-			l = 1;
-		if (fmt->f.z && l < (n = fmt->mfw - p))
-			l = n;
+		if (len->l < 1)
+			len->l = 1;
+		if (!fmt->f.j && fmt->f.z && len->l < (len->n = fmt->mfw - len->p))
+			len->l = len->n;
 	}
-	else if (fmt->prc > l)
+	else if (fmt->prc > len->l)
 	{
-		l = fmt->prc;
-		if (ft_strequ(pfx, "0"))
+		len->l = fmt->prc;
+		if (ft_strequ(*pfx, "0"))
 		{
-			pfx = "";
-			p = 0;
+			*pfx = "";
+			len->p = 0;
 		}
 	}
+	len->sc = len->l + len->p < fmt->mfw ? fmt->mfw - (len->l + len->p) : 0;
+	len->n = len->l + len->p + len->sc;
+}
 
-	sc = l + p < fmt->mfw ? fmt->mfw - (l + p) : 0;
-
-	n = l + p + sc;
-
-	if (!(s = malloc(sizeof(*s) * n)))
-		return (-1);
+void		nbrcpy(char **s, t_nbr_l *len, uintmax_t nbr, t_fmt_spec *fmt)
+{
+	char		*bs;
 
 	bs = fmt->cnv == 'X' ? "0123456789ABCDEF" : "0123456789abcdef";
+	while (--len->l >= 0)
+	{
+		(*s)[len->l] = bs[nbr % len->b];
+		nbr /= len->b;
+	}
+}
 
+int			write_nbr(int fd, uintmax_t nbr, char * /*const*/ pfx, t_fmt_spec *fmt)
+{
+	t_nbr_l		len;
+	char		*s;
+
+	get_base_l_init(&len, fmt, nbr);
+	refine_len(&len, &pfx, fmt);
+	if (!(s = malloc(sizeof(*s) * len.n)))
+		return (-1);
 	if (fmt->f.j)
 	{
-		ft_memcpy(s, pfx, p);
-		ft_memset(s + l + p, ' ', sc);
-		s += p;
-		while (--l >= 0)
-		{
-			s[l] = bs[nbr % b];
-			nbr /= b;
-		}
-		s -= p;
+		ft_memcpy(s, pfx, len.p);
+		ft_memset(s + len.l + len.p, ' ', len.sc);
+		s += len.p;
+		nbrcpy(&s, &len, nbr, fmt);
+		s -= len.p;
 	}
 	else
 	{
-		ft_memcpy(s + sc, pfx, p);
-		ft_memset(s, ' ', sc);
-		s += p + sc;
-		while (--l >= 0)
-		{
-			s[l] = bs[nbr % b];
-			nbr /= b;
-		}
-		s -= p + sc;
+		ft_memcpy(s + len.sc, pfx, len.p);
+		ft_memset(s, ' ', len.sc);
+		s += len.p + len.sc;
+		nbrcpy(&s, &len, nbr, fmt);
+		s -= len.p + len.sc;
 	}
-
-	write(fd, s, n);
+	write(fd, s, len.n);
 	free(s);
-	return n;
+	return (len.n);
 }
 
 char		*get_signed_prefix(intmax_t nbr, t_fmt_spec *fmt)

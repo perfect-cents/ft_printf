@@ -14,7 +14,7 @@ int		ft_vdprintf(int fd, char const * format, va_list ap)
 		if (*format == '%')
 		{
 			format += parse_fmt_spec(format, ap, &fmt);
-			if ((status = handler(fd, ap, &fmt)) < 0)
+			if ((status = fmt.valid) && (status = handler(fd, ap, &fmt)) < 0)
 				return (-1);
 			printed += status;
 		}

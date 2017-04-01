@@ -1,7 +1,7 @@
 #include <ft_printf.h>
 #include <libft.h>
 
-int		parse_fmt_spec(char const * format, va_list ap, t_fmt_spec * const fmt)
+int		parse_fmt_spec(char const * format, va_list ap, t_fmt_spec * /*const*/ fmt)
 {
 	int	prog;
 
@@ -11,8 +11,10 @@ int		parse_fmt_spec(char const * format, va_list ap, t_fmt_spec * const fmt)
 	prog += parse_precision(format + prog, ap, fmt);
 	prog += parse_length_modifier(format + prog, fmt);
 	if (!format[prog] || !parse_conversion_spec(format + prog, fmt))
-		return (1);
-	return (prog + 1);
+		fmt->valid = 0;
+	else
+		fmt->valid = 1;
+	return (prog + fmt->valid);
 }
 
 intmax_t	signed_arg(va_list ap, t_fmt_spec const * const fmt)
@@ -65,11 +67,11 @@ int		handler(int fd, va_list ap, t_fmt_spec *fmt)
 	if (fmt->cnv == '%')
 		return (write_char(fd, '%', fmt));
 	else if (fmt->cnv == 'c' && fmt->lm == lm_l)
-		return (write_wchar_fake(fd, va_arg(ap, wint_t), fmt));
+		return (write_char(fd, va_arg(ap, wint_t), fmt));
 	else if (fmt->cnv == 'c')
 		return (write_char(fd, (char)va_arg(ap, int), fmt));
 	else if (fmt->cnv == 's' && fmt->lm == lm_l)
-		return (write_wstr_fake(fd, va_arg(ap, wchar_t *), fmt));
+		return (write_wstr(fd, va_arg(ap, wchar_t *), fmt));
 	else if (fmt->cnv == 's')
 		return (write_str(fd, va_arg(ap, char *), fmt));
 	else if (ft_strchr("uboOxXp", fmt->cnv))

@@ -27,7 +27,17 @@ typedef struct
 	int				prc;
 	enum e_lm		lm;
 	char			cnv;
+	int				valid;
 }					t_fmt_spec;
+
+typedef struct
+{
+	int	b;
+	int	l;
+	int	p;
+	int	sc;
+	int	n;
+}					t_nbr_l;
 
 int					ft_printf(char const * format, ...);
 int					ft_dprintf(int fd, char const * format, ...);

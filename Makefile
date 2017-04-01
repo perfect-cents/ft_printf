@@ -24,6 +24,7 @@ $(LIB):
 clean:
 	rm -rf $(OBJS)
 	$(MAKE) -C $(LIBDIR) fclean
+	find $(PWD) -type d -exec dot_clean -nm {} \;
 
 fclean: clean
 	rm -f $(NAME)
