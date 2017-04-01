@@ -153,14 +153,13 @@ int			write_wchar_fake(int fd, wint_t c, t_fmt_spec *fmt)
 	int		n;
 	char	*s;
 
-	c = c < 0 ? '?' : c;
 	l = 1 + (c > 0x7F) + (c > 0x7FF) + (c > 0xFFFF);
 	n = fmt->mfw > l ? fmt->mfw : l;
 	if (!(s = malloc(sizeof(*s) * n)))
 		return (-1);
 	if (fmt->f.j)
 	{
-		*s = c < 0 ? '?' : c;
+		*s = c;// < 0 ? '?' : c;
 		ft_memset(s + 1, ' ', n - l);
 	}
 	else
