@@ -146,7 +146,7 @@ int			write_wstr(int fd, wchar_t *ws, t_fmt_spec *fmt)
 	return (n);
 }
 
-int			write_wchar_fake(int fd, wint_t c, t_fmt_spec *fmt)
+int			write_char_fake(int fd, wint_t c, t_fmt_spec *fmt)
 {
 	int		l;
 	int		n;
