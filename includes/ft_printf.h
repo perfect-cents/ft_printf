@@ -59,11 +59,11 @@ int			write_char(int fd, wint_t c, t_fmt_spec *fmt);
 int			write_str(int fd, char *s, t_fmt_spec *fmt);
 int			write_wstr(int fd, wchar_t *ws, t_fmt_spec *fmt);
 int			write_wstr_fake(int fd, wchar_t *ws, t_fmt_spec *fmt);
-int			write_wchar_fake(int fd, wint_t c, t_fmt_spec *fmt);
+int			write_char_fake(int fd, wint_t c, t_fmt_spec *fmt);
 
 char		*get_signed_prefix(intmax_t nbr, t_fmt_spec *fmt);
 char		*get_unsigned_prefix(uintmax_t nbr, t_fmt_spec *fmt);
-
+int			wstrlen(wchar_t *ws, t_fmt_spec * const fmt);
 
 int			handler(int fd, va_list ap, t_fmt_spec *fmt);
 int			parse_fmt_spec(char const * format, va_list ap, \
