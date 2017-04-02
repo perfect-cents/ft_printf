@@ -66,10 +66,13 @@ int		handler(int fd, va_list ap, t_fmt_spec *fmt)
 
 	if (fmt->cnv == '%')
 		return (write_char(fd, '%', fmt));
-	else if (fmt->cnv == 'c' && fmt->lm == lm_l)
-		return (write_wchar_fake(fd, va_arg(ap, wint_t), fmt));
-	else if (fmt->cnv == 'c')
-		return (write_char(fd, (char)va_arg(ap, int), fmt));
+	else if (fmt->cnv == 'c')// && fmt->lm == lm_l)
+	{
+		d = va_arg(ap, wint_t);
+		return (write_char(fd, (char)d, fmt) + (d > 0x7F) + (d > 0x7FF) + (d > 0xFFFF));
+	}
+	//else if (fmt->cnv == 'c')
+	//	return (write_char(fd, (char)va_arg(ap, int), fmt));
 	else if (fmt->cnv == 's' && fmt->lm == lm_l)
 		return (write_wstr_fake(fd, va_arg(ap, wchar_t *), fmt));
 	else if (fmt->cnv == 's')

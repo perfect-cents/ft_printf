@@ -147,32 +147,6 @@ int			write_wstr(int fd, wchar_t *ws, t_fmt_spec *fmt)
 	return (n);
 }
 
-int			write_wchar_fake(int fd, wint_t c, t_fmt_spec *fmt)
-{
-	int		l;
-	int		n;
-	char	*s;
-
-	l = 1 + (c > 0x7F) + (c > 0x7FF) + (c > 0xFFFF);
-	n = fmt->mfw > l ? fmt->mfw : l;
-	if (!(s = malloc(sizeof(*s) * n)))
-		return (-1);
-	if (fmt->f.j)
-	{
-		*s = c;// < 0 ? '?' : c;
-		ft_memset(s + 1, ' ', n - l);
-	}
-	else
-	{
-		ft_memset(s, fmt->f.z ? '0' : ' ', n - l);
-		*(s + n - l) = c < 0 ? '?' : c;
-	}
-	write(fd, s, n - l + 1);
-	free(s);
-	return (n);
-}
-
-
 int			wstrlen_fake(wchar_t *ws, t_fmt_spec * const fmt)
 {
 	int		l;

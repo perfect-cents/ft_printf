@@ -12,7 +12,7 @@ int		ft_vdprintf(int fd, char const * format, va_list ap)
 	while (*format)
 	{
 		if (*format == '%')
-		{
+		 {
 			format += parse_fmt_spec(format, ap, &fmt);
 			if ((status = fmt.valid) && (status = handler(fd, ap, &fmt)) < 0)
 				return (-1);
